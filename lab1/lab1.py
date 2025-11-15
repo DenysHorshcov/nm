@@ -3,50 +3,53 @@ import math
 def f(x):
     return x**3 - 3*x**2 - 14*x - 8
 
+# φ(x) для методу простої ітерації
 def phi(x):
-    tau = 2 / 89
-    return x - tau * f(x)
-
-def ao(q, xn, xp):
-    return abs(xn - xp) / (1 - q)
+    return (3*x*x + 14*x + 8)**(1/3)
 
 def iterative_method():
     a = 5
     b = 6
     x0 = (a + b) / 2
-    e = 10**-4
-    q = 27 / 89
-    n = int(
-        math.log(abs(phi(x0) - x0) / ((1 - q) * e)) / math.log(1 / q)
-    ) + 1
-    x = x0
+    e = 10**-8
 
-    print(f"\n{'n':<5} | {'x':<20} | {'f(x)':<20} | {'ao':<20}")
-    print("-" * 70)
+    print(f"\n{'n':<5} | {'x':<20} | {'f(x)':<20} | {'|xn-xp|':<20}")
+    print("-" * 80)
+
+    x = x0
     print(f"{0:<5} | {x:<20} | {f(x):<20} | {'-':<20}")
 
-    for i in range(n):
+    for n in range(1, 1000):  # максимум 1000 ітерацій на випадок розбігу
         xp = x
-        x = phi(x)
-        ao_value = ao(q, x, xp)
-        print(f"{i+1:<5} | {x:<20} | {f(x):<20} | {ao_value:<20}")
-    print()
+        x = phi(xp)
+        diff = abs(x - xp)
+
+        print(f"{n:<5} | {x:<20} | {f(x):<20} | {diff:<20}")
+
+        if diff < e:
+            break
+
+    print(f"\nFinal approximation: x ≈ {x}")
+    print(f"Iterations: {n}\n")
+
 
 def bisection_method():
     a = 5
     b = 6
-    e = 10**-4
+    e = 10**-8
+
     n_apr = math.ceil(math.log((b - a) / e) / math.log(2))
 
-    print(f"\n{'n':<5} | {'x':<20} | {'f(x)':<20} | {'ao':<20}")
-    print("-" * 70)
+    print(f"\n{'n':<5} | {'a':<15} | {'b':<15} | {'x':<20} | {'f(x)':<20}")
+    print("-" * 90)
 
     for i in range(1, n_apr + 1):
         x = (a + b) / 2
         fx = f(x)
-        ao_value = (b - a) / 2
-        print(f"{i:<5} | {x:<20} | {fx:<20} | {ao_value:<20}")
 
+        print(f"{i:<5} | {a:<15} | {b:<15} | {x:<20} | {fx:<20}")
+
+        # вибір нового проміжку
         if fx * f(a) < 0:
             b = x
         else:
@@ -54,7 +57,9 @@ def bisection_method():
 
         if (b - a) < 2 * e:
             break
-    print()
+
+    print(f"\nFinal approximation: x ≈ {x}")
+    print(f"Iterations: {i}\n")
 
 
 while True:
